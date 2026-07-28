@@ -494,7 +494,7 @@ function renderRanking() {
     type:"bar",orientation:"h",x:features.map(feature=>aggregateFeature(feature)[dashboardState.indicator]),
     y:features.map(feature=>featureName(feature)),customdata:features.map(feature=>featureCode(feature)),
     marker:{color:features.map(feature=>dashboardState.selectedFeature?.code===featureCode(feature)
-      ? "#b6812d" : "#3d8171")},
+      ? "#506779" : "#3d8171")},
     hovertemplate:`%{y}<br>${indicatorLabel()}: %{x:,.0f}<extra></extra>`
   }],{
     margin:{l:145,r:24,t:10,b:45},paper_bgcolor:"transparent",plot_bgcolor:"transparent",
@@ -531,7 +531,7 @@ function renderAnnualBars() {
   }
   const series=buildAnnualReportedPersons(dashboardState.data.records,selectedGeography);
   const values=series.map(item=>item.value);
-  const colors=ALL_YEARS.map(year=>year===2021?"#9a9f9d":dashboardState.selectedYears.includes(year)?"#b6812d":"#3d8171");
+  const colors=ALL_YEARS.map(year=>year===2021?"#9a9f9d":dashboardState.selectedYears.includes(year)?"#506779":"#3d8171");
   $("annualTitle").textContent=`${t("annualEvolutionFor")} — ${geographyLabel}`;
   $("annualSubtitle").textContent=`${t("origin")} · ${t("reportedPersons")}`;
   Plotly.react("trendChart",[{
