@@ -43,6 +43,24 @@ const I18N = {
   }
 };
 Object.assign(I18N.es,{
+  headerEyebrow:"2017–2023 · MÉXICO",title:"Desplazamiento interno documentado",
+  subtitle:"Eventos y personas identificadas mediante el monitoreo anual de la Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH).",
+  sourceMethods:"Fuente y metodología",closeMethods:"Cerrar",methodsDataSourceTitle:"Fuente de los datos",
+  methodsDataSource:"Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH). Monitoreo anual del desplazamiento interno en México.",
+  methodsScopeTitle:"Alcance",methodsScope:"El tablero presenta eventos y personas identificadas entre 2017 y 2023. No hay observaciones disponibles para 2021.",
+  methodsMethodTitle:"Tratamiento de los datos",methodsMethod:"Los registros municipales se vinculan y agregan mediante claves geográficas oficiales. Los años seleccionados se suman de forma independiente y la información faltante se conserva como no disponible.",
+  methodsLimitationsTitle:"Limitaciones",methodsLimitations:"Las cifras constituyen un mínimo documentado y no un censo completo. La ausencia de eventos documentados no demuestra la ausencia de desplazamiento.",
+  methodsCartographyTitle:"Tratamiento cartográfico",methodsCartography:"Los nombres y límites geográficos corresponden a la cartografía municipal oficial de INEGI; las entidades se construyen a partir de sus claves geográficas.",
+  methodsAttributionTitle:"Atribución institucional",dataMethodSourceLabel:"Fuente de datos e investigación:",
+  dashboardDesignLabel:"Diseño y desarrollo del dashboard:",cmdpdhName:"Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH).",
+  contactTitle:"Contacto",dataSourceLabel:"Fuente de datos",
+  formalCitation:"Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH). Monitoreo anual del desplazamiento interno en México.",
+  interpretiveNoteLabel:"Nota de interpretación",
+  footerInterpretiveNote:"Las cifras representan un mínimo documentado y no un censo completo del desplazamiento interno en México. Los valores se agregan a partir de eventos de desplazamiento documentados mediante la metodología de monitoreo de la CMDPDH. La información faltante nunca se interpreta como cero. Las áreas sin eventos documentados pueden reflejar información no disponible o no verificada y no deben interpretarse como áreas sin desplazamiento.",
+  viewSourceMethods:"Consultar fuente y metodología",dashboardDevelopment:"Desarrollo del dashboard",
+  lastUpdated:"Última actualización:",institutionalContact:"Contacto institucional",
+  participatingInstitutions:"Instituciones participantes",cmdpdhRole:"Fuente de datos e investigación",
+  utRole:"Diseño y desarrollo del dashboard",
   direction:"Dirección",origin:"Origen",destination:"Destino",peopleFrom:"Personas desde el área",
   peopleTo:"Personas hacia el área",populationAndCauses:"Población, retorno y causas",
   returnStatus:"Retorno",indigenousPopulation:"Población indígena",armedAttack:"Ataque armado",
@@ -59,6 +77,24 @@ Object.assign(I18N.es,{
   ,methodText:"Los municipios son la unidad fuente y se agregan por clave geográfica. Origen incluye todos los registros; destino incluye solo nombres con una coincidencia municipal oficial única. Los porcentajes de variables binarias son promedios de los valores conocidos multiplicados por 100. La falta de información no se convierte en cero."
 });
 Object.assign(I18N.en,{
+  headerEyebrow:"2017–2023 · MEXICO",title:"Documented Internal Displacement",
+  subtitle:"Events and people identified through the annual monitoring of the Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH).",
+  sourceMethods:"Source and Methods",closeMethods:"Close",methodsDataSourceTitle:"Data source",
+  methodsDataSource:"Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH). Annual Monitoring of Internal Displacement in Mexico.",
+  methodsScopeTitle:"Scope",methodsScope:"The dashboard presents events and people identified from 2017 through 2023. No observations are available for 2021.",
+  methodsMethodTitle:"Data treatment",methodsMethod:"Municipal records are linked and aggregated using official geographic codes. Selected years are summed independently, and missing information remains unavailable.",
+  methodsLimitationsTitle:"Limitations",methodsLimitations:"The figures constitute a documented minimum rather than a complete census. The absence of documented events does not demonstrate the absence of displacement.",
+  methodsCartographyTitle:"Cartographic treatment",methodsCartography:"Geographic names and boundaries follow official INEGI municipal cartography; states are constructed from their geographic codes.",
+  methodsAttributionTitle:"Institutional attribution",dataMethodSourceLabel:"Data source and research:",
+  dashboardDesignLabel:"Dashboard design and development:",cmdpdhName:"Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH).",
+  contactTitle:"Contact",dataSourceLabel:"Data source",
+  formalCitation:"Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH). Annual Monitoring of Internal Displacement in Mexico.",
+  interpretiveNoteLabel:"Interpretive note",
+  footerInterpretiveNote:"The figures represent a documented minimum rather than a complete census of internal displacement in Mexico. Values are aggregated from documented displacement events identified through the CMDPDH monitoring methodology. Missing information is never interpreted as zero. Areas without documented events may reflect unavailable or unverified information and should not be interpreted as areas without displacement.",
+  viewSourceMethods:"View Source and Methods",dashboardDevelopment:"Dashboard development",
+  lastUpdated:"Last updated:",institutionalContact:"Institutional contact",
+  participatingInstitutions:"Participating institutions",cmdpdhRole:"Data source and research",
+  utRole:"Dashboard design and development",
   direction:"Direction",origin:"Origin",destination:"Destination",peopleFrom:"People from the area",
   peopleTo:"People to the area",populationAndCauses:"Population, return, and causes",
   returnStatus:"Return status",indigenousPopulation:"Indigenous population",armedAttack:"Armed attack",
@@ -91,7 +127,10 @@ const DUMMY_FIELDS = [
   ["extortion","extortion"],["disappearances","disappearances"],["intentional_eviction","intentionalEviction"]
 ];
 const OPTIONAL_DIMENSIONS = ["rural_urban","vulnerable_population"];
-const palette = ["#edf2ef","#c8ddd4","#8ebbaa","#4e927e","#1d665b","#0d403b"];
+const MAP_PALETTES = {
+  origin:["#edf2ef","#c8ddd4","#8ebbaa","#4e927e","#1d665b","#0d403b"],
+  destination:["#edf2ef","#c8ddd4","#8ebbaa","#4e927e","#1d665b","#0d403b"]
+};
 
 const dashboardState = {
   language:"es",
@@ -238,6 +277,10 @@ function updateYearsFromPicker() {
 }
 
 function bindEvents() {
+  const methodsDialog=$("methodsDialog");
+  document.querySelectorAll("[data-open-methods]").forEach(button=>button.addEventListener("click",()=>methodsDialog.showModal()));
+  $("closeMethods").addEventListener("click",()=>methodsDialog.close());
+  methodsDialog.addEventListener("click",event=>{if(event.target===methodsDialog)methodsDialog.close()});
   $("languageToggle").addEventListener("click",()=>{
     dashboardState.language=dashboardState.language==="es"?"en":"es";
     renderDashboard();
@@ -321,6 +364,7 @@ function classification(features) {
 
 function colorFor(value,cuts) {
   if (value==null) return getComputedStyle(document.documentElement).getPropertyValue("--color-null").trim();
+  const palette=MAP_PALETTES[dashboardState.direction];
   return palette[value<=cuts[0]?0:value<=cuts[1]?1:value<=cuts[2]?2:value<=cuts[3]?3:value<=cuts[4]?4:5];
 }
 
@@ -335,11 +379,14 @@ function renderMap() {
       const value=aggregateFeature(feature)[dashboardState.indicator];
       const fillColor=colorFor(value,cuts);
       const selected=dashboardState.selectedFeature?.code===featureCode(feature);
-      if (selected) return {weight:3,opacity:1,color:"#d9a441",fillColor,fillOpacity:.9};
+      if (selected && dashboardState.geographyLevel==="states") {
+        return {weight:0,opacity:0,color:fillColor,fillColor,fillOpacity:.96};
+      }
+      if (selected) return {weight:.8,opacity:.9,color:"#59635f",fillColor,fillOpacity:.92};
       if (dashboardState.geographyLevel==="states") {
         return {weight:0,opacity:0,color:fillColor,fillColor,fillOpacity:.82};
       }
-      return {weight:.4,opacity:.65,color:"#718079",fillColor,fillOpacity:.82};
+      return {weight:.4,opacity:.65,color:"#8d9692",fillColor,fillOpacity:.82};
     },
     onEachFeature:(feature,layer)=>{
       const metric=aggregateFeature(feature)[dashboardState.indicator];
@@ -365,6 +412,7 @@ function renderMap() {
 
 function renderLegend(features,cuts) {
   const values=features.map(feature=>aggregateFeature(feature)[dashboardState.indicator]).filter(value=>value!=null);
+  const palette=MAP_PALETTES[dashboardState.direction];
   let ranges="";
   if (values.length) {
     const bounds=[Math.min(...values),...cuts,Math.max(...values)];
@@ -444,7 +492,9 @@ function renderRanking() {
   $("rankingTitle").textContent=t(dashboardState.geographyLevel==="states"?"mainStates":"mainMunicipalities");
   Plotly.react("rankingChart",[{
     type:"bar",orientation:"h",x:features.map(feature=>aggregateFeature(feature)[dashboardState.indicator]),
-    y:features.map(feature=>featureName(feature)),customdata:features.map(feature=>featureCode(feature)),marker:{color:"#3d8171"},
+    y:features.map(feature=>featureName(feature)),customdata:features.map(feature=>featureCode(feature)),
+    marker:{color:features.map(feature=>dashboardState.selectedFeature?.code===featureCode(feature)
+      ? "#b6812d" : "#3d8171")},
     hovertemplate:`%{y}<br>${indicatorLabel()}: %{x:,.0f}<extra></extra>`
   }],{
     margin:{l:145,r:24,t:10,b:45},paper_bgcolor:"transparent",plot_bgcolor:"transparent",
@@ -481,7 +531,7 @@ function renderAnnualBars() {
   }
   const series=buildAnnualReportedPersons(dashboardState.data.records,selectedGeography);
   const values=series.map(item=>item.value);
-  const colors=ALL_YEARS.map(year=>year===2021?"rgba(0,0,0,0)":"#1d665b");
+  const colors=ALL_YEARS.map(year=>year===2021?"#9a9f9d":dashboardState.selectedYears.includes(year)?"#b6812d":"#3d8171");
   $("annualTitle").textContent=`${t("annualEvolutionFor")} — ${geographyLabel}`;
   $("annualSubtitle").textContent=`${t("origin")} · ${t("reportedPersons")}`;
   Plotly.react("trendChart",[{
@@ -536,6 +586,7 @@ function translate() {
   document.documentElement.lang=dashboardState.language;
   document.querySelectorAll("[data-i18n]").forEach(element=>element.textContent=t(element.dataset.i18n));
   document.querySelectorAll("[data-i18n-placeholder]").forEach(element=>element.placeholder=t(element.dataset.i18nPlaceholder));
+  document.querySelectorAll("[data-i18n-aria-label]").forEach(element=>element.setAttribute("aria-label",t(element.dataset.i18nAriaLabel)));
   $("languageToggle").textContent=dashboardState.language==="es"?"EN":"ES";
   $("languageToggle").setAttribute("aria-label",dashboardState.language==="es"?"Switch to English":"Cambiar a español");
   $("stateFilter").options[0].textContent=t("allStates");

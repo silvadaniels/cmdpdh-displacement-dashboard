@@ -12,10 +12,11 @@
 </head>
 <body>
   <header class="site-header">
-    <div>
-      <p class="eyebrow">CMDPDH · MÉXICO · 2017–2023</p>
-      <h1 data-i18n="title">Desplazamiento interno en México</h1>
-      <p class="subtitle" data-i18n="subtitle">Explora los registros documentados por año, entidad y municipio.</p>
+    <div class="header-copy">
+      <p class="eyebrow" data-i18n="headerEyebrow">2017–2023 · MÉXICO</p>
+      <h1 data-i18n="title">Desplazamiento interno documentado</h1>
+      <p class="subtitle" data-i18n="subtitle">Eventos y personas identificadas mediante el monitoreo anual de la Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH).</p>
+      <button class="methods-button" type="button" data-open-methods data-i18n="sourceMethods">Fuente y metodología</button>
     </div>
     <button id="languageToggle" class="language-toggle" aria-label="Switch to English">EN</button>
   </header>
@@ -182,18 +183,67 @@
       <p id="tableCount" class="table-count"></p>
     </section>
 
-    <section class="methodology">
-      <div><p class="kicker" data-i18n="methodology">Metodología</p><h2 data-i18n="howToRead">Cómo leer estos datos</h2></div>
-      <div class="method-copy">
-        <p data-i18n="methodText">Los municipios son la unidad fuente y se agregan automáticamente por clave geográfica a las entidades. Los años seleccionados se suman de forma independiente; la selección nunca es acumulativa por defecto. La falta de información no se convierte en cero.</p>
-        <p><strong data-i18n="source">Fuente:</strong> <span data-i18n="sourceText">CMDPDH y cartografía municipal de INEGI.</span> <a href="docs/DATA_AUDIT.md" data-i18n="audit">Consultar auditoría de datos</a>.</p>
-      </div>
-    </section>
   </main>
-  <footer><span>CMDPDH · 2017–2023</span><span data-i18n="footer">Tablero estático de acceso público</span></footer>
+
+  <dialog id="methodsDialog" class="methods-dialog" aria-labelledby="methodsTitle">
+    <div class="dialog-header">
+      <div>
+        <p class="kicker">CMDPDH · 2017–2023</p>
+        <h2 id="methodsTitle" data-i18n="sourceMethods">Fuente y metodología</h2>
+      </div>
+      <button id="closeMethods" class="dialog-close" type="button" data-i18n-aria-label="closeMethods" aria-label="Cerrar">×</button>
+    </div>
+    <div class="dialog-content">
+      <section><h3 data-i18n="methodsDataSourceTitle">Fuente de los datos</h3><p data-i18n="methodsDataSource"></p></section>
+      <section><h3 data-i18n="methodsScopeTitle">Alcance</h3><p data-i18n="methodsScope"></p></section>
+      <section><h3 data-i18n="methodsMethodTitle">Tratamiento de los datos</h3><p data-i18n="methodsMethod"></p></section>
+      <section><h3 data-i18n="methodsLimitationsTitle">Limitaciones</h3><p data-i18n="methodsLimitations"></p></section>
+      <section><h3 data-i18n="methodsCartographyTitle">Tratamiento cartográfico</h3><p data-i18n="methodsCartography"></p></section>
+      <section>
+        <h3 data-i18n="methodsAttributionTitle">Atribución institucional</h3>
+        <p><strong data-i18n="dataMethodSourceLabel">Fuente de datos e investigación:</strong><br><span data-i18n="cmdpdhName">Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH).</span></p>
+        <p><strong data-i18n="dashboardDesignLabel">Diseño y desarrollo del dashboard:</strong><br>The University of Texas at Austin · Department of Geography and the Environment.</p>
+      </section>
+      <section>
+        <h3 data-i18n="contactTitle">Contacto</h3>
+        <address><span data-i18n="cmdpdhName">Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH).</span><br><a href="mailto:info@cmdpdh.org">info@cmdpdh.org</a> · <a href="https://cmdpdh.org/">cmdpdh.org</a></address>
+      </section>
+    </div>
+  </dialog>
+
+  <footer class="institutional-footer">
+    <div class="footer-content">
+      <div class="attribution-grid">
+        <section>
+          <h2 data-i18n="dataSourceLabel">Fuente de datos</h2>
+          <p data-i18n="formalCitation">Comisión Mexicana de Defensa y Promoción de los Derechos Humanos (CMDPDH). Monitoreo anual del desplazamiento interno en México.</p>
+        </section>
+        <section class="interpretive-footer">
+          <h2 data-i18n="interpretiveNoteLabel">Nota de interpretación</h2>
+          <p data-i18n="footerInterpretiveNote">Las cifras representan un mínimo documentado y no un censo completo del desplazamiento interno en México. Los valores se agregan a partir de eventos de desplazamiento documentados mediante la metodología de monitoreo de la CMDPDH. La información faltante nunca se interpreta como cero. Las áreas sin eventos documentados pueden reflejar información no disponible o no verificada y no deben interpretarse como áreas sin desplazamiento.</p>
+          <button class="footer-methods-link" type="button" data-open-methods data-i18n="viewSourceMethods">Consultar fuente y metodología</button>
+        </section>
+      </div>
+      <div class="footer-meta">
+        <p><strong data-i18n="dashboardDevelopment">Desarrollo del dashboard</strong><br>The University of Texas at Austin · Department of Geography and the Environment.</p>
+        <p><span data-i18n="lastUpdated">Última actualización:</span> <time datetime="2026-07">2026-07</time></p>
+        <address><strong data-i18n="institutionalContact">Contacto institucional</strong><br><a href="mailto:info@cmdpdh.org">info@cmdpdh.org</a> · <a href="https://cmdpdh.org/">cmdpdh.org</a></address>
+      </div>
+      <div class="institutional-roles" data-i18n-aria-label="participatingInstitutions" aria-label="Instituciones participantes">
+        <section class="institution-block">
+          <h2 data-i18n="cmdpdhRole">Fuente de datos e investigación</h2>
+          <div class="institution-logo"><img src="./assets/logos/cmdpdh_logo.webp" alt="CMDPDH"></div>
+        </section>
+        <section class="institution-block">
+          <h2 data-i18n="utRole">Diseño y desarrollo del dashboard</h2>
+          <div class="institution-logo"><img src="./assets/logos/ut-geography.svg" alt="The University of Texas at Austin"></div>
+        </section>
+      </div>
+    </div>
+  </footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script src="assets/js/annual.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js?v=20260728-1"></script>
 </body>
 </html>
