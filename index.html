@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Tablero público sobre desplazamiento interno en México, CMDPDH 2017–2023.">
+  <title>Desplazamiento interno en México · CMDPDH</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">CMDPDH · MÉXICO · 2017–2023</p>
+      <h1 data-i18n="title">Desplazamiento interno en México</h1>
+      <p class="subtitle" data-i18n="subtitle">Explora los registros documentados por año, entidad y municipio.</p>
+    </div>
+    <button id="languageToggle" class="language-toggle" aria-label="Switch to English">EN</button>
+  </header>
+
+  <main>
+    <section class="controls" aria-label="Controles del tablero">
+      <div class="control-row control-row-primary">
+        <div class="segmented" role="group" aria-label="Nivel del mapa">
+          <span data-i18n="level">Nivel</span>
+          <button class="active" data-level="states" data-i18n="states">Estados</button>
+          <button data-level="municipalities" data-i18n="municipalities">Municipios</button>
+        </div>
+        <div class="segmented" role="group" aria-label="Dirección">
+          <span data-i18n="direction">Dirección</span>
+          <button class="active" data-direction="origin" data-i18n="origin">Origen</button>
+          <button data-direction="destination" data-i18n="destination">Destino</button>
+        </div>
+        <div class="control-group">
+          <label for="indicatorSelect" data-i18n="indicator">Indicador</label>
+          <select id="indicatorSelect">
+            <option value="persons_reported" data-i18n="reportedPersons">Personas reportadas</option>
+            <option value="persons_estimated" data-i18n="estimatedPersons">Personas estimadas</option>
+            <option value="families_displaced" data-i18n="displacedFamilies">Familias desplazadas</option>
+            <option value="event_records" data-i18n="displacementEvents">Eventos de desplazamiento</option>
+          </select>
+        </div>
+      </div>
+      <div class="control-row control-row-secondary">
+        <div class="control-group year-picker">
+          <label data-i18n="years">Años</label>
+          <details id="yearPicker">
+            <summary id="yearSummary">2023</summary>
+            <div class="year-menu">
+              <label><input type="checkbox" value="2017">2017</label>
+              <label><input type="checkbox" value="2018">2018</label>
+              <label><input type="checkbox" value="2019">2019</label>
+              <label><input type="checkbox" value="2020">2020</label>
+              <label class="disabled"><input type="checkbox" value="2021" disabled>2021 — <span data-i18n="noDataShort">Sin datos</span></label>
+              <label><input type="checkbox" value="2022">2022</label>
+              <label><input type="checkbox" value="2023" checked>2023</label>
+              <div class="year-actions">
+                <button id="selectAllYears" type="button" data-i18n="selectAll">Seleccionar todos</button>
+                <button id="clearYears" type="button" data-i18n="clear">Limpiar</button>
+              </div>
+            </div>
+          </details>
+        </div>
+        <div class="control-group">
+          <label for="stateFilter" data-i18n="stateFilter">Filtrar por estado</label>
+          <select id="stateFilter"><option value="" data-i18n="allStates">Todos los estados</option></select>
+        </div>
+        <button id="clearFilters" class="clear-filters" type="button" data-i18n="clearFilters">Limpiar filtros</button>
+      </div>
+    </section>
+
+    <div id="errorMessage" class="error" role="alert" hidden></div>
+    <div id="periodNote" class="period-note"></div>
+
+    <section class="cards" aria-label="Resumen">
+      <article><span id="activeIndicatorLabel">Personas reportadas</span><strong id="activeIndicatorTotal">—</strong><small id="activeIndicatorCoverage"></small></article>
+      <article><span id="secondaryIndicatorLabel" data-i18n="displacementEvents">Eventos de desplazamiento</span><strong id="eventTotal">—</strong><small id="periodSummary"></small></article>
+      <article><span data-i18n="areasWithData">Áreas con información</span><strong id="areasWithData">—</strong><small id="areaContext"></small></article>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="analysis-stack">
+        <article class="panel map-panel">
+          <div class="panel-heading">
+            <div><p class="kicker" data-i18n="geography">Geografía</p><h2 id="mapTitle">Estados · Personas estimadas</h2></div>
+            <p data-i18n="mapHint">Selecciona un área para filtrar todo el tablero.</p>
+          </div>
+          <div id="map" aria-label="Mapa coroplético interactivo"></div>
+          <div id="legend" class="legend"></div>
+        </article>
+
+        <section class="charts-grid">
+          <article class="panel chart-panel">
+            <div class="panel-heading"><div><p class="kicker" data-i18n="ranking">Clasificación</p><h2 id="rankingTitle">Principales estados</h2></div></div>
+            <div id="rankingChart"></div>
+          </article>
+          <article class="panel chart-panel">
+            <div class="panel-heading"><div><p class="kicker" data-i18n="trend">Tendencia</p><h2 id="annualTitle">Evolución anual — México</h2><p id="annualSubtitle" class="chart-subtitle">Origen · Personas reportadas</p></div></div>
+            <div id="trendChart"></div>
+            <p class="chart-note" data-i18n="gapNote">2021 se muestra como no disponible y no se interpola.</p>
+          </article>
+        </section>
+      </div>
+
+      <aside class="panel detail-panel" aria-live="polite">
+        <p class="kicker" data-i18n="selectedArea">Área seleccionada</p>
+        <h2 id="detailName" data-i18n="nothingSelected">Ninguna selección</h2>
+        <p id="detailState" class="detail-state"></p>
+        <div class="detail-actions">
+          <button id="clearSelection" class="clear-selection" data-i18n="clearSelection" hidden>Limpiar selección</button>
+          <button id="inspectMunicipalities" class="inspect-municipalities" data-i18n="inspectMunicipalities" hidden>Ver municipios</button>
+        </div>
+        <div class="detail-accordions">
+          <details open>
+            <summary data-i18n="totals">Totales</summary>
+            <dl>
+              <div><dt data-i18n="peopleFrom">Personas desde el área</dt><dd id="detailFrom">—</dd></div>
+              <div><dt data-i18n="peopleTo">Personas hacia el área</dt><dd id="detailTo">—</dd></div>
+              <div data-detail-indicator="persons_reported"><dt data-i18n="reportedPersons">Personas reportadas</dt><dd id="detailReported">—</dd></div>
+              <div data-detail-indicator="persons_estimated"><dt data-i18n="estimatedPersons">Personas estimadas</dt><dd id="detailEstimated">—</dd></div>
+              <div data-detail-indicator="families_displaced"><dt data-i18n="displacedFamilies">Familias desplazadas</dt><dd id="detailFamilies">—</dd></div>
+              <div data-detail-indicator="event_records"><dt data-i18n="displacementEvents">Eventos de desplazamiento</dt><dd id="detailEvents">—</dd></div>
+            </dl>
+          </details>
+          <details>
+            <summary data-i18n="population">Población</summary>
+            <div id="detailPopulation"></div>
+          </details>
+          <details>
+            <summary data-i18n="reportedCausesHeading">Causas reportadas entre registros con información disponible</summary>
+            <div id="detailCauses"></div>
+          </details>
+          <details>
+            <summary data-i18n="return">Retorno</summary>
+            <div id="detailReturn"></div>
+          </details>
+          <details>
+            <summary data-i18n="metadata">Metadatos</summary>
+            <dl>
+              <div><dt data-i18n="period">Periodo</dt><dd id="detailPeriod">—</dd></div>
+              <div><dt data-i18n="direction">Dirección</dt><dd id="detailDirection">—</dd></div>
+              <div><dt data-i18n="geography">Geografía</dt><dd id="detailGeography">—</dd></div>
+            </dl>
+          </details>
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="panel-heading table-heading">
+        <div><p class="kicker" data-i18n="data">Datos</p><h2 data-i18n="reportedAreas">Áreas reportadas</h2></div>
+        <input id="tableSearch" type="search" data-i18n-placeholder="search" placeholder="Buscar municipio o estado">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th data-i18n="area">Área</th><th data-i18n="state">Estado</th>
+            <th data-i18n="peopleFrom">Personas desde</th><th data-i18n="peopleTo">Personas hacia</th>
+            <th data-column="persons_reported" data-i18n="reportedPersons">Personas reportadas</th>
+            <th data-column="persons_estimated" data-i18n="estimatedPersons">Personas estimadas</th>
+            <th data-column="families_displaced" data-i18n="displacedFamilies">Familias desplazadas</th>
+            <th data-column="event_records" data-i18n="displacementEvents">Eventos</th>
+            <th data-dummy="return_status" data-i18n="returnStatus">Retorno</th>
+            <th data-dummy="indigenous_population" data-i18n="indigenousPopulation">Población indígena</th>
+            <th data-dummy="armed_attack" data-i18n="armedAttack">Ataque armado</th>
+            <th data-dummy="clashes" data-i18n="clashes">Enfrentamientos</th>
+            <th data-dummy="weapons_presence" data-i18n="weaponsPresence">Presencia de armas</th>
+            <th data-dummy="threats_intimidation" data-i18n="threatsIntimidation">Amenazas/intimidación</th>
+            <th data-dummy="property_destruction" data-i18n="propertyDestruction">Destrucción de bienes</th>
+            <th data-dummy="forced_recruitment" data-i18n="forcedRecruitment">Reclutamiento forzado</th>
+            <th data-dummy="detentions" data-i18n="detentions">Detenciones</th>
+            <th data-dummy="killings" data-i18n="killings">Asesinatos</th>
+            <th data-dummy="extortion" data-i18n="extortion">Extorsión</th>
+            <th data-dummy="disappearances" data-i18n="disappearances">Desapariciones</th>
+            <th data-dummy="intentional_eviction" data-i18n="intentionalEviction">Desalojo intencional</th>
+          </tr></thead>
+          <tbody id="dataTable"></tbody>
+        </table>
+      </div>
+      <p id="tableCount" class="table-count"></p>
+    </section>
+
+    <section class="methodology">
+      <div><p class="kicker" data-i18n="methodology">Metodología</p><h2 data-i18n="howToRead">Cómo leer estos datos</h2></div>
+      <div class="method-copy">
+        <p data-i18n="methodText">Los municipios son la unidad fuente y se agregan automáticamente por clave geográfica a las entidades. Los años seleccionados se suman de forma independiente; la selección nunca es acumulativa por defecto. La falta de información no se convierte en cero.</p>
+        <p><strong data-i18n="source">Fuente:</strong> <span data-i18n="sourceText">CMDPDH y cartografía municipal de INEGI.</span> <a href="docs/DATA_AUDIT.md" data-i18n="audit">Consultar auditoría de datos</a>.</p>
+      </div>
+    </section>
+  </main>
+  <footer><span>CMDPDH · 2017–2023</span><span data-i18n="footer">Tablero estático de acceso público</span></footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="assets/js/annual.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
