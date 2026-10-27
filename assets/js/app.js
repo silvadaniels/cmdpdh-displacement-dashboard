@@ -227,7 +227,7 @@ async function loadData() {
         }))
     );
     dashboardState.data = {states,municipalities,annual,records};
-    init();
+    await init();
   } catch (error) {
     $("errorMessage").textContent = t("loadError");
     $("errorMessage").hidden = false;
@@ -235,24 +235,20 @@ async function loadData() {
   }
 }
 
-function init() {
+async function init() {
   map = L.map("map",{
-    zoomControl:true,minZoom:4,scrollWheelZoom:false,preferCanvas:true
+    zoomControl:true,minZoom:4,maxZoom:20,scrollWheelZoom:false,preferCanvas:true
   }).setView([23.7,-102.2],5);
   map.createPane("basemapPane"); map.getPane("basemapPane").style.zIndex=200;
   map.createPane("polygonPane"); map.getPane("polygonPane").style.zIndex=400;
   map.createPane("labelsPane"); map.getPane("labelsPane").style.zIndex=650;
   map.getPane("labelsPane").style.pointerEvents="none";
-  const attribution='&copy; OpenStreetMap contributors &copy; CARTO';
-  lightBasemap=L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",{
-    pane:"basemapPane",attribution,subdomains:"abcd",maxZoom:20
-  }).addTo(map);
+  const basemapStyles=await OpenFreeMap.loadStyles();
+  lightBasemap=OpenFreeMap.layer(basemapStyles.background,"basemapPane").addTo(map);
   roadsBasemap=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
     pane:"basemapPane",attribution:"&copy; OpenStreetMap contributors",maxZoom:19
   });
-  labelsLayer=L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",{
-    pane:"labelsPane",attribution,subdomains:"abcd",maxZoom:20
-  }).addTo(map);
+  labelsLayer=OpenFreeMap.layer(basemapStyles.labels,"labelsPane").addTo(map);
   [...dashboardState.data.states.features]
     .sort((a,b)=>properties(a).state_name.localeCompare(properties(b).state_name,"es"))
     .forEach(feature=>$("stateFilter").add(new Option(properties(feature).state_name,properties(feature).state_id)));
@@ -401,7 +397,7 @@ function renderMap() {
       });
     }
   }).addTo(map);
-  labelsLayer.bringToFront();
+  // The labels pane stays above polygons without intercepting pointer events.
   if (features.length) {
     const bounds=geoLayer.getBounds();
     if (bounds.isValid()) map.fitBounds(bounds,{padding:[12,12],maxZoom:dashboardState.geographyLevel==="states"?6:9});

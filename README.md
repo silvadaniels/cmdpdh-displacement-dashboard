@@ -13,3 +13,11 @@ python3 scripts/preprocess.py .
 
 See [`docs/REVISION_NOTES.md`](docs/REVISION_NOTES.md) for the state-dissolve,
 indicator, time-selection, interaction, and annual-chart corrections.
+
+The light basemap and labels use the [OpenFreeMap Positron style](https://openfreemap.org/quick_start/)
+through MapLibre GL JS and its Leaflet adapter. Symbols render in a transparent
+pane above the data polygons; Leaflet retains map interactions and controls,
+including the existing OpenStreetMap roads option. Provider credits appear in
+Leaflet's attribution control. No basemap API key or environment variables are
+required. The basemap requires WebGL and access to the OpenFreeMap tile, font,
+and sprite endpoints. Map libraries are version-pinned in `index.html`.

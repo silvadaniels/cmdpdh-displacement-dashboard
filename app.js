@@ -39,8 +39,9 @@ function render(){
 }
 async function init(){
  [annual,states,geoData]=await Promise.all(["annual.json","state.json","municipal.geojson"].map(f=>fetch(`data/processed/${f}`).then(r=>{if(!r.ok)throw Error(f);return r.json()})));
- map=L.map("map",{zoomControl:true,scrollWheelZoom:false,minZoom:4}).setView([23.5,-102],5);
- L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",{attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:12}).addTo(map);
+ map=L.map("map",{zoomControl:true,scrollWheelZoom:false,minZoom:4,maxZoom:12}).setView([23.5,-102],5);
+ const basemapStyles=await OpenFreeMap.loadStyles();
+ OpenFreeMap.layer(basemapStyles.background,"tilePane").addTo(map);
  render();
 }
 document.querySelector("#year").addEventListener("input",e=>{selected=YEARS[+e.target.value];render()});
